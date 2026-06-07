@@ -16,7 +16,6 @@ import {
   type InitiativeMedia,
 } from "@/lib/initiative-store";
 import { getLandingData } from "@/lib/landing.functions";
-import { landingQueryOptions } from "@/routes";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPanel,
@@ -118,7 +117,7 @@ function AdminPanel() {
       console.log("Saving partner:", p);
       await upsertPartner(p);
       await refreshData();
-      // Invalidate landing page cache to show updated logo immediately
+      // Invalidate landing page cache to force re-fetch
       await queryClient.invalidateQueries({ queryKey: ["landing"] });
       setEditingPartner(null);
       flash("Partner saved successfully");
@@ -154,7 +153,7 @@ function AdminPanel() {
       await upsertOpportunity(o);
       await upsertInitiativeMedia(m);
       await refreshData();
-      // Invalidate landing page cache to show updated initiative immediately
+      // Invalidate landing page cache to force re-fetch
       await queryClient.invalidateQueries({ queryKey: ["landing"] });
       setEditingInitiative(null);
       setEditingMedia(null);
@@ -856,7 +855,7 @@ function PartnerEditSheet({
 
 // helper kept outside to avoid component-name collisions
 function partners_isNew(_id: string): boolean {
-  return false; // sheet title shown as "Edit"/"New" doesn't depend on this anymore
+  return false;
 }
 
 /* ════ INITIATIVE EDIT SHEET ════ */
