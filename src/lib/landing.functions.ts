@@ -99,18 +99,34 @@ export const getLandingData = createServerFn({ method: "GET" }).handler(
     media: InitiativeMediaRow[];
   }> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    let [partnersR, themesR, metricsR, oppsR, mediaR] = await Promise.all([
-      supabaseAdmin.from("partners" as never).select("*").order("sort_order"),
-      supabaseAdmin.from("themes" as never).select("*").order("sort_order"),
-      supabaseAdmin.from("metrics" as never).select("*").order("sort_order"),
-      supabaseAdmin.from("opportunities" as never).select("*").order("occurred_on", { ascending: false }),
+    const [initialPartnersR, themesR, metricsR, oppsR, mediaR] = await Promise.all([
+      supabaseAdmin
+        .from("partners" as never)
+        .select("*")
+        .order("sort_order"),
+      supabaseAdmin
+        .from("themes" as never)
+        .select("*")
+        .order("sort_order"),
+      supabaseAdmin
+        .from("metrics" as never)
+        .select("*")
+        .order("sort_order"),
+      supabaseAdmin
+        .from("opportunities" as never)
+        .select("*")
+        .order("occurred_on", { ascending: false }),
       supabaseAdmin.from("initiative_media" as never).select("*"),
     ]);
+    let partnersR = initialPartnersR;
 
     if (!partnersR.error && (partnersR.data ?? []).length === 0) {
       const { error } = await supabaseAdmin.from("partners" as never).insert(PARTNER_SEED as never);
       if (error) console.error("partner seed error:", error);
-      partnersR = await supabaseAdmin.from("partners" as never).select("*").order("sort_order");
+      partnersR = await supabaseAdmin
+        .from("partners" as never)
+        .select("*")
+        .order("sort_order");
     }
 
     if (partnersR.error) console.error("partners error:", partnersR.error);
