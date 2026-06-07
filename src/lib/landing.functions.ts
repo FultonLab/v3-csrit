@@ -59,6 +59,7 @@ type PartnerSeed = Omit<Partner, "id" | "logo_url" | "initiatives"> & {
   initiatives?: string[];
 };
 
+// prettier-ignore
 const PARTNER_SEED: PartnerSeed[] = [
   { name: "Harvard University", short_name: "Harvard", country: "USA", region: "North America", category: "University", themes: ["Research & Commercialisation", "Health & Life Sciences"], strategic_relevance: "Prestigious research and educational institution with world-leading programs", tier: 1, sort_order: 1 },
   { name: "Massachusetts Institute of Technology", short_name: "MIT", country: "USA", region: "North America", category: "University", themes: ["AI & Sovereign Compute", "Research & Commercialisation"], strategic_relevance: "World-renowned technology and research institution driving innovation", tier: 1, sort_order: 2 },
