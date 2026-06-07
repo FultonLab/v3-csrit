@@ -160,9 +160,9 @@ function Hero() {
                 Chief Scientist, Republic of Cyprus
               </p>
               <p className="text-[15px] text-muted-foreground mt-3 max-w-sm leading-relaxed italic">
-                "My role is to make Cyprus a dynamic and competitive economy, driven by research,
+                My role is to make Cyprus a dynamic and competitive economy, driven by research,
                 scientific excellence, innovation, technological development and entrepreneurship.
-                To lead as a regional European center of excellence, in partnership with the world."
+                To lead as a regional European center of excellence, in partnership with the world.
               </p>
             </div>
           </div>
