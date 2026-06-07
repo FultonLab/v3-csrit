@@ -5,15 +5,17 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { supabase } from "@/integrations/supabase/client";
 import {
   newId,
-  upsertPartner,
-  deletePartner,
-  upsertOpportunity,
-  deleteOpportunity,
-  upsertInitiativeMedia,
   type StoredPartner,
   type StoredOpportunity,
   type InitiativeMedia,
 } from "@/lib/initiative-store";
+import {
+  deleteOpportunity,
+  deletePartner,
+  upsertInitiativeMedia,
+  upsertOpportunity,
+  upsertPartner,
+} from "@/lib/admin-content.functions";
 import { getLandingData } from "@/lib/landing.functions";
 
 export const Route = createFileRoute("/admin")({
@@ -113,7 +115,7 @@ function AdminPanel() {
     setIsSaving(true);
     try {
       console.log("Saving partner:", p);
-      await upsertPartner(p);
+      await upsertPartner({ data: p });
       await refreshData();
       setEditingPartner(null);
       flash("Partner saved successfully");
@@ -128,7 +130,7 @@ function AdminPanel() {
   const handleDeletePartner = async (id: string) => {
     setIsSaving(true);
     try {
-      await deletePartner(id);
+      await deletePartner({ data: id });
       await refreshData();
       flash("Partner deleted");
     } catch (e: unknown) {
@@ -144,8 +146,8 @@ function AdminPanel() {
     try {
       console.log("Saving opportunity:", o);
       console.log("Saving initiative media:", m);
-      await upsertOpportunity(o);
-      await upsertInitiativeMedia(m);
+      await upsertOpportunity({ data: o });
+      await upsertInitiativeMedia({ data: m });
       await refreshData();
       setEditingInitiative(null);
       setEditingMedia(null);
@@ -161,7 +163,7 @@ function AdminPanel() {
   const handleDeleteInitiative = async (id: string) => {
     setIsSaving(true);
     try {
-      await deleteOpportunity(id);
+      await deleteOpportunity({ data: id });
       await refreshData();
       flash("Initiative deleted");
     } catch (e: unknown) {
