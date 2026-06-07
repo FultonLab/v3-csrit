@@ -29,7 +29,10 @@ export const deletePartner = createServerFn({ method: "POST" })
   .inputValidator((data) => data as string)
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await requireSuperadmin(context.userId);
-    const { error } = await supabaseAdmin.from("partners" as never).delete().eq("id", data);
+    const { error } = await supabaseAdmin
+      .from("partners" as never)
+      .delete()
+      .eq("id", data);
     if (error) throw error;
     return { ok: true };
   });
@@ -49,7 +52,10 @@ export const deleteOpportunity = createServerFn({ method: "POST" })
   .inputValidator((data) => data as string)
   .handler(async ({ data, context }) => {
     const supabaseAdmin = await requireSuperadmin(context.userId);
-    const { error } = await supabaseAdmin.from("opportunities" as never).delete().eq("id", data);
+    const { error } = await supabaseAdmin
+      .from("opportunities" as never)
+      .delete()
+      .eq("id", data);
     if (error) throw error;
     return { ok: true };
   });
