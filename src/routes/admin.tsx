@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   newId,
   upsertPartner,
@@ -15,6 +16,7 @@ import {
   type InitiativeMedia,
 } from "@/lib/initiative-store";
 import { getLandingData } from "@/lib/landing.functions";
+import { landingQueryOptions } from "@/routes";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPanel,
@@ -25,6 +27,7 @@ const SUPERADMIN_EMAIL = "babar.by@gmail.com";
 
 function AdminPanel() {
   const [tab, setTab] = useState<Tab>("partners");
+  const queryClient = useQueryClient();
 
   // Auth state
   const [authLoading, setAuthLoading] = useState(true);
@@ -115,6 +118,8 @@ function AdminPanel() {
       console.log("Saving partner:", p);
       await upsertPartner(p);
       await refreshData();
+      // Invalidate landing page cache to show updated logo immediately
+      await queryClient.invalidateQueries({ queryKey: ["landing"] });
       setEditingPartner(null);
       flash("Partner saved successfully");
     } catch (e: unknown) {
@@ -130,6 +135,8 @@ function AdminPanel() {
     try {
       await deletePartner(id);
       await refreshData();
+      // Invalidate landing page cache
+      await queryClient.invalidateQueries({ queryKey: ["landing"] });
       flash("Partner deleted");
     } catch (e: unknown) {
       console.error("Partner delete error:", e);
@@ -147,6 +154,8 @@ function AdminPanel() {
       await upsertOpportunity(o);
       await upsertInitiativeMedia(m);
       await refreshData();
+      // Invalidate landing page cache to show updated initiative immediately
+      await queryClient.invalidateQueries({ queryKey: ["landing"] });
       setEditingInitiative(null);
       setEditingMedia(null);
       flash("Initiative saved successfully");
@@ -163,6 +172,8 @@ function AdminPanel() {
     try {
       await deleteOpportunity(id);
       await refreshData();
+      // Invalidate landing page cache
+      await queryClient.invalidateQueries({ queryKey: ["landing"] });
       flash("Initiative deleted");
     } catch (e: unknown) {
       console.error("Initiative delete error:", e);
