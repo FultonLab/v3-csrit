@@ -20,9 +20,11 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 
-const landingQueryOptions = queryOptions({
+export const landingQueryOptions = queryOptions({
   queryKey: ["landing"],
   queryFn: () => getLandingData(),
+  staleTime: 0,
+  gcTime: 1000 * 60 * 5,
 });
 
 export const Route = createFileRoute("/")({
@@ -265,6 +267,7 @@ function NetworkSection({ partners }: { partners: Partner[] }) {
                 <div className="w-full aspect-square grid place-items-center overflow-hidden">
                   {p.logo_url ? (
                     <img
+                      key={`${p.id}-${p.logo_url.slice(0, 50)}`}
                       src={p.logo_url}
                       alt={p.name}
                       className="w-full h-full object-contain p-1"
@@ -462,6 +465,7 @@ function OpportunitiesSection({
                 {media?.cover_image_url ? (
                   <div className="w-full aspect-video overflow-hidden">
                     <img
+                      key={`${o.id}-${media.cover_image_url.slice(0, 50)}`}
                       src={media.cover_image_url}
                       alt={o.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
