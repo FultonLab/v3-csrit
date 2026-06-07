@@ -479,6 +479,7 @@ function PartnerCard({
       <div className="w-full aspect-square rounded-xl bg-muted/40 grid place-items-center overflow-hidden">
         {partner.logo_url ? (
           <img
+            key={`${partner.id}-${partner.logo_url.slice(0, 50)}`}
             src={partner.logo_url}
             alt={partner.name}
             className="w-full h-full object-contain p-3"
@@ -596,7 +597,7 @@ function InitiativeAdminCard({
     <article className="rounded-2xl border border-border/50 bg-card shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col">
       <div className="relative w-full aspect-video bg-gradient-to-br from-muted to-muted/50 overflow-hidden">
         {media?.cover_image_url ? (
-          <img src={media.cover_image_url} alt={o.title} className="w-full h-full object-cover" />
+          <img key={`${o.id}-cover-${media.cover_image_url.slice(0, 50)}`} src={media.cover_image_url} alt={o.title} className="w-full h-full object-cover" />
         ) : (
           <div className="absolute inset-0 grid place-items-center opacity-30 text-xs">
             no cover
@@ -684,10 +685,14 @@ function PartnerEditSheet({
   isSaving: boolean;
 }) {
   const [form, setForm] = useState<StoredPartner | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (partner) setForm({ ...partner });
+    if (partner) {
+      setForm({ ...partner });
+      setLogoPreview(partner.logo_url);
+    }
   }, [partner]);
 
   const set = (field: keyof StoredPartner, value: unknown) =>
@@ -695,7 +700,11 @@ function PartnerEditSheet({
 
   const handleLogoFile = (file: File) => {
     const reader = new FileReader();
-    reader.onload = () => set("logo_url", reader.result as string);
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setLogoPreview(dataUrl);
+      set("logo_url", dataUrl);
+    };
     reader.readAsDataURL(file);
   };
 
@@ -731,8 +740,8 @@ function PartnerEditSheet({
                 className="w-20 h-20 rounded-xl bg-muted/40 border border-border/60 grid place-items-center overflow-hidden shrink-0 cursor-pointer"
                 onClick={() => fileRef.current?.click()}
               >
-                {form.logo_url ? (
-                  <img src={form.logo_url} className="w-full h-full object-contain p-2" />
+                {logoPreview ? (
+                  <img key={`preview-${logoPreview.slice(0, 50)}`} src={logoPreview} className="w-full h-full object-contain p-2" />
                 ) : (
                   <span className="text-2xl font-bold text-muted-foreground/40">
                     {(form.short_name ?? form.name).slice(0, 2).toUpperCase() || "?"}
@@ -744,11 +753,14 @@ function PartnerEditSheet({
                   onClick={() => fileRef.current?.click()}
                   className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted/50 transition"
                 >
-                  {form.logo_url ? "Replace Logo" : "Upload Logo"}
+                  {logoPreview ? "Replace Logo" : "Upload Logo"}
                 </button>
-                {form.logo_url && (
+                {logoPreview && (
                   <button
-                    onClick={() => set("logo_url", null)}
+                    onClick={() => {
+                      setLogoPreview(null);
+                      set("logo_url", null);
+                    }}
                     className="ml-2 text-xs text-muted-foreground hover:text-destructive"
                   >
                     Remove
@@ -923,7 +935,7 @@ function InitiativeEditSheet({
               onClick={() => coverRef.current?.click()}
             >
               {coverPreview ? (
-                <img src={coverPreview} className="w-full h-full object-cover" />
+                <img key={`cover-preview-${coverPreview.slice(0, 50)}`} src={coverPreview} className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 grid place-items-center text-muted-foreground/40 text-xs">
                   Click to upload cover image
